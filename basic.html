@@ -1,0 +1,25 @@
+<html>
+<head>
+  <script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+  </head>
+
+<body>
+<script>
+  var targets = [{primary_description: "a"}, {primary_description: "b"}];
+  var ranks = [[1, .5, .5, 10], [0, .4, .2, 15]];
+  var votes = {0: {"1 stars": 23, "2 stars": 14, "3 stars": 8, "4 stars": 2},
+               1: {"5 stars": 1, "3 stars": 9, "1 stars": 20, "2 stars": 13, "4 stars": 1}};
+
+  function make_csv(){
+      $("#test_div").html("<b> HELLO IVAN</b>");
+    }
+</script>
+
+<button onclick="make_csv()"> Download CSV </button>
+<div id="test_div"> </div>
+</body>
+
+</html>
