@@ -7,15 +7,65 @@
   </head>
 
 <body>
+
+
 <script>
-  var targets = [{primary_description: "a"}, {primary_description: "b"}];
+  var targets = [{"primary_description": "a"}, {"primary_description": "b"}];
   var ranks = [[1, .5, .5, 10], [0, .4, .2, 15]];
-  var votes = {0: {"1 stars": 23, "2 stars": 14, "3 stars": 8, "4 stars": 2},
-               1: {"5 stars": 1, "3 stars": 9, "1 stars": 20, "2 stars": 13, "4 stars": 1}};
+  var votes = {"0": {"1 stars": 23, "2 stars": 14, "3 stars": 8, "4 stars": 2}, "1": {"5 stars": 1, "3 stars": 9, "1 stars": 20, "2 stars": 13, "4 stars": 1}};
+
+  ranks.sort();
+  var ranks_o = {};
+  for (var i = 0; i < ranks.length; i++) {
+    ranks_o[i] = ranks[i];
+  }
+
+  var ranks_values = ranks;
+  var ranks_keys = ranks;
+  document.write(ranks_o);
+  //for (var i = 0; i < ranks_values.length; i++) {
+  //  ranks_values[i].shift(0);
+  //  ranks_keys[i].shift()
+  //  }
+  //document.write(ranks);
+  var combined = $.extend(true, targets, votes);
+//  for (var i = 0; i< combined.length; i++) {
+//    combined.push("aaa");
+//  }
+
+
+  //var array = $.extend(true, {}, targets, ranks, votes);
+  // array.toString();
+
+  //var combined = [];
+  //  for (var i = 0; i < targets.length; i++) {
+    //
+  //  }
 
   function make_csv(){
-      $("#test_div").html("<b> HELLO IVAN</b>");
+      $("#test_div").html("<b> Hello </b>");
     }
+
+
+
+  function ConvertToCSV(objArray) {
+      var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+      var str = '';
+
+      for (var i = 0; i < array.length; i++) {
+          var line = '';
+          for (var index in array[i]) {
+              if (line != '') line += ','
+
+              line += array[i][index];
+          }
+
+          str += line + '\r\n';
+      }
+
+      return str;
+    }
+
 </script>
 
 <button onclick="make_csv()"> Download CSV </button>
