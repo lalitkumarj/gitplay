@@ -14,33 +14,62 @@
   var ranks = [[1, .5, .5, 10], [0, .4, .2, 15]];
   var votes = {"0": {"1 stars": 23, "2 stars": 14, "3 stars": 8, "4 stars": 2}, "1": {"5 stars": 1, "3 stars": 9, "1 stars": 20, "2 stars": 13, "4 stars": 1}};
 
-  ranks.sort();
-  var ranks_o = {};
+  var combined = ""
+
   for (var i = 0; i < ranks.length; i++) {
-    ranks_o[i] = ranks[i];
+    var string = "";
+
+    // Add rank
+    string += [i] + ",";
+
+    // Add caption
+    string += "\"" + targets[ranks[i][0]]["primary_description"] + "\",";
+    string += ranks[i][1] + "," + ranks[i][2] + "," + ranks[i][3] + ",";
+
+    // Add 1 star votes
+    if (typeof votes[ranks[i][0]]["1 stars"] != "undefined") {
+      string += votes[ranks[i][0]]["1 stars"] + ",";
+    }
+    else {
+      string += 0 + ",";
+    }
+
+    // Add 2 star votes
+    if (typeof votes[ranks[i][0]]["2 stars"] != "undefined") {
+      string += votes[ranks[i][0]]["2 stars"] + ",";
+    }
+    else {
+      string += 0 + ",";
+    }
+
+    // Add 3 star votes
+    if (typeof votes[ranks[i][0]]["3 stars"] != "undefined") {
+      string += votes[ranks[i][0]]["3 stars"] + ",";
+    }
+    else {
+      string += 0 + ",";
+    }
+
+    // Add 4 star votes
+    if (typeof votes[ranks[i][0]]["4 stars"] != "undefined") {
+      string += votes[ranks[i][0]]["4 stars"] + ",";
+    }
+    else {
+      string += 0 + ",";
+    }
+
+    // Add 5 star votes
+    if (typeof votes[ranks[i][0]]["5 stars"] != "undefined") {
+      string += votes[ranks[i][0]]["5 stars"];
+    }
+    else {
+      string += 0;
+    }
+    combined += string + "\n";
   }
 
-  var ranks_values = ranks;
-  var ranks_keys = ranks;
-  document.write(ranks_o);
-  //for (var i = 0; i < ranks_values.length; i++) {
-  //  ranks_values[i].shift(0);
-  //  ranks_keys[i].shift()
-  //  }
-  //document.write(ranks);
-  var combined = $.extend(true, targets, votes);
-//  for (var i = 0; i< combined.length; i++) {
-//    combined.push("aaa");
-//  }
+  console.log(combined);
 
-
-  //var array = $.extend(true, {}, targets, ranks, votes);
-  // array.toString();
-
-  //var combined = [];
-  //  for (var i = 0; i < targets.length; i++) {
-    //
-  //  }
 
   function make_csv(){
       $("#test_div").html("<b> Hello </b>");
@@ -60,7 +89,7 @@
               line += array[i][index];
           }
 
-          str += line + '\r\n';
+          str += line + '\n';
       }
 
       return str;
