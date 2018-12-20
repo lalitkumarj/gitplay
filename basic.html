@@ -60,11 +60,11 @@
           string += ranks[i][3] + "," + ranks[i][1] + "," + ranks[i][2] + ",";
 
           // Add votes
-          string += votes[ranks[i][0]]["1 stars"] + "," || 0 + ",";
-          string += votes[ranks[i][0]]["2 stars"] + "," || 0 + ",";
-          string += votes[ranks[i][0]]["3 stars"] + "," || 0 + ",";
-          string += votes[ranks[i][0]]["4 stars"] + "," || 0 + ",";
-          string += votes[ranks[i][0]]["5 stars"] + "\n" || 0 + "\n";
+          string += (votes[ranks[i][0]]["1 stars"] || 0) + ",";
+          string += (votes[ranks[i][0]]["2 stars"] || 0) + ",";
+          string += (votes[ranks[i][0]]["3 stars"] || 0) + ",";
+          string += (votes[ranks[i][0]]["4 stars"] || 0) + ",";
+          string += (votes[ranks[i][0]]["5 stars"] || 0) + "\n";
         }
         result += string;
         return result;
