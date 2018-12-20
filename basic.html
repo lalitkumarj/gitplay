@@ -1,92 +1,104 @@
-<html>
-<head>
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js"
-    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-    crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-</head>
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title></title>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+  </head>
 
-<body>
+  <body>
+    <script>
+      function import_json() {
+        targets = $.getJSON("https://s3-us-west-2.amazonaws.com/cartooncollections/cc1a5c88ae81221d6252cbc2109200c2/targets.json");
+        ranks = $.getJSON("https://s3-us-west-2.amazonaws.com/cartooncollections/cc1a5c88ae81221d6252cbc2109200c2/ranks.json")
+        votes = $.getJSON("https://s3-us-west-2.amazonaws.com/cartooncollections/cc1a5c88ae81221d6252cbc2109200c2/votes.json")
 
+        // Processing targets.json
+        $.when(targets).done(function(data) {
+            targets = data;
+            console.log("Targets acquired.")
+            //console.log(targets);
+            //console.log(targets.length);
+            //console.log(targets[0]["primary_description"]);
+        });
 
-<script>
+        // Processing ranks.json
+        $.when(ranks).done(function(data) {
+          ranks = data;
+          console.log("Ranks determined.")
+          //console.log(ranks.length);
+          //console.log(ranks[0]);
+        })
 
-  var targets = [{"primary_description": "a"}, {"primary_description": "b"}];
-  var ranks = [[1, .5, .5, 10], [0, .4, .2, 15]];
-  var votes = {"0": {"1 stars": 23, "2 stars": 14, "3 stars": 8, "4 stars": 2}, "1": {"5 stars": 1, "3 stars": 9, "1 stars": 20, "2 stars": 13, "4 stars": 1}};
+        // Processing votes.json
+        $.when(votes).done(function(data) {
+          votes = data;
+          console.log("Votes tallied.")
+          //console.log(votes[0]["1 stars"])
+        })
+        $("#first").html("Files imported.");
+        return targets, ranks, votes;
+      }
 
-  function make_csv(targets, ranks, votes) {
-    var result, string, columnDelimiter, lineDelimiter;
+      function make_csv() {
+        var result = "";
+        var keys = "Rank,Target,T,μ,Precision,1 star,2 stars,3 stars,4 stars,5 stars";
+        var string = keys + "\n";
 
-    var keys = "Rank,Target,T,μ,Precision,1 star,2 stars,3 stars,4 stars,5 stars";
+        for (var i = 0; i < targets.length; i++) {
+          string += [i] + ",";
 
-    result = "";
-    string = keys + "\n";
+          // Add captions
+          string += "\"" + targets[ranks[i][0]]["primary_description"] + "\",";
 
-    columnDelimiter = ",";
-    lineDelimieter = "\n";
+          // Add ranks
+          string += ranks[i][3] + "," + ranks[i][1] + "," + ranks[i][2] + ",";
 
-    for (var i = 0; i < ranks.length; i++) {
-      string += [i] + ",";
+          // Add votes
+          string += votes[ranks[i][0]]["1 stars"] + "," || 0 + ",";
+          string += votes[ranks[i][0]]["2 stars"] + "," || 0 + ",";
+          string += votes[ranks[i][0]]["3 stars"] + "," || 0 + ",";
+          string += votes[ranks[i][0]]["4 stars"] + "," || 0 + ",";
+          string += votes[ranks[i][0]]["5 stars"] + "\n" || 0 + "\n";
+        }
+        result += string;
+        return result;
+      }
 
-      // Add captions
-      string += "\"" + targets[ranks[i][0]]["primary_description"] + "\",";
+      function download_csv() {
+        var data, filename, link;
+        var csv = make_csv();
 
-      // Add ranks
-      string += ranks[i][1] + "," + ranks[i][2] + "," + ranks[i][3] + ",";
+        csv = 'data:text/csv;charset=utf-8,' + csv;
+        data = encodeURI(csv);
+        filename = "export.csv";
 
-      // Add votes
-      string += votes[ranks[i][0]]["1 stars"] + "," || 0 + ",";
-      string += votes[ranks[i][0]]["2 stars"] + "," || 0 + ",";
-      string += votes[ranks[i][0]]["3 stars"] + "," || 0 + ",";
-      string += votes[ranks[i][0]]["4 stars"] + "," || 0 + ",";
-      string += votes[ranks[i][0]]["5 stars"] + "\n" || 0 + "\n";
-    }
-    result += string;
-    return result;
-  }
+        var link = document.createElement("a");
+        link.setAttribute('href', data);
+        link.setAttribute('download', filename);
+        link.click();
+      }
+    </script>
 
-  var data = make_csv(targets, ranks, votes);
-  console.log(data);
+    <a href='#' onclick='import_json();'>
+      <button type="button" class="btn btn-primary">
+        <i class="fas fa-file-import"></i>
+        Import JSON
+      </button>
+    </a>
+    <div id="first"> </div>
+    <br>
+    <a href='#' onclick='download_csv();'>
+      <button type="button" class="btn btn-primary">
+        <i class="fas fa-file-download"></i>
+        Download CSV
+      </button>
+    </a>
 
-  function download_csv() {
-    var data, filename, link;
-    var csv = make_csv(targets, ranks, votes);
-
-    csv = 'data:text/csv;charset=utf-8,' + csv;
-    data = encodeURI(csv);
-    filename = "export.csv";
-
-    var link = document.createElement("a");
-    link.setAttribute('href', data);
-    link.setAttribute('download', filename);
-    link.click();
-
-    button.addEventListener("click",download_csv());
-
-    // JQuery stuff
-    //$("#download").attr({
-    //  'href': data,
-    //  'download': filename
-    //})
-
-  }
-
-//  function make_csv2() {
-//      $("#test_div").html("<b> Hello </b>");
-//  }
-
-</script>
-
-<a href='#' onclick='download_csv();'>
-  <button type="button" class="btn btn-primary">Download CSV</button>
-</a>
-
-<!--
-<button onclick="make_csv2()"> Download CSV2 </button>
-<div id="test_div"> </div>
--->
-
-</body>
-
+  </body>
 </html>
