@@ -13,36 +13,32 @@
 
   <body>
     <script>
-      function import_json() {
+      function download_csv() {
         targets = $.getJSON("https://s3-us-west-2.amazonaws.com/cartooncollections/cc1a5c88ae81221d6252cbc2109200c2/targets.json");
         ranks = $.getJSON("https://s3-us-west-2.amazonaws.com/cartooncollections/cc1a5c88ae81221d6252cbc2109200c2/ranks.json")
         votes = $.getJSON("https://s3-us-west-2.amazonaws.com/cartooncollections/cc1a5c88ae81221d6252cbc2109200c2/votes.json")
 
         // Processing targets.json
-        $.when(targets).done(function(data) {
-            targets = data;
+        $.when(targets, ranks, votes).done(function(a1, a2, a3) {
+            targets = a1[0];
+            ranks = a2[0];
+            votes = a3[0];
             console.log("Targets acquired.")
-            //console.log(targets);
-            //console.log(targets.length);
-            //console.log(targets[0]["primary_description"]);
-        });
+            console.log("Ranks determined.")
+            console.log("Votes tallied.")
 
-        // Processing ranks.json
-        $.when(ranks).done(function(data) {
-          ranks = data;
-          console.log("Ranks determined.")
-          //console.log(ranks.length);
-          //console.log(ranks[0]);
-        })
+            var data, filename, link;
+            var csv = make_csv();
 
-        // Processing votes.json
-        $.when(votes).done(function(data) {
-          votes = data;
-          console.log("Votes tallied.")
-          //console.log(votes[0]["1 stars"])
+            csv = 'data:text/csv;charset=utf-8,' + csv;
+            data = encodeURI(csv);
+            filename = "export.csv";
+
+            var link = document.createElement("a");
+            link.setAttribute('href', data);
+            link.setAttribute('download', filename);
+            link.click();
         })
-        $("#first").html("Files imported.");
-        return targets, ranks, votes;
       }
 
       function make_csv() {
@@ -69,30 +65,8 @@
         result += string;
         return result;
       }
-
-      function download_csv() {
-        var data, filename, link;
-        var csv = make_csv();
-
-        csv = 'data:text/csv;charset=utf-8,' + csv;
-        data = encodeURI(csv);
-        filename = "export.csv";
-
-        var link = document.createElement("a");
-        link.setAttribute('href', data);
-        link.setAttribute('download', filename);
-        link.click();
-      }
     </script>
 
-    <a href='#' onclick='import_json();'>
-      <button type="button" class="btn btn-primary">
-        <i class="fas fa-file-import"></i>
-        Import JSON
-      </button>
-    </a>
-    <div id="first"> </div>
-    <br>
     <a href='#' onclick='download_csv();'>
       <button type="button" class="btn btn-primary">
         <i class="fas fa-file-download"></i>
